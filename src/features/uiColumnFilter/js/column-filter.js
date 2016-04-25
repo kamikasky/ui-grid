@@ -90,7 +90,8 @@
       128: 'Less than',
       256: 'Less than or equal',
       32: 'More than',
-      64: 'More than or equal'
+      64: 'More than or equal',
+      1024: 'None'
     },
     dateOperators: {
       8: 'Exact',
@@ -98,21 +99,24 @@
       128: 'Before',
       256: 'Before or equal',
       32: 'Later',
-      64: 'Later or equal'
+      64: 'Later or equal',
+      1024: 'None'
     },
     stringOperators: {
       16: 'Contains',
       4: 'Ends With',
       8: 'Exact',
       512: 'Not Equal',
-      2: 'Starts With'
+      2: 'Starts With',
+      1024: 'None'
     },
     selectOperators: {
       16: 'Contains',
       4: 'Ends With',
       8: 'Exact',
       512: 'Not Equal',
-      2: 'Starts With'
+      2: 'Starts With',
+      1024: 'None'
     },
     logics: {
       "OR": 'Or',
@@ -199,7 +203,8 @@
               var columnFilter = {
                 terms: [],
                 operators: [],
-                logics: []
+                logics: [],
+                isNull: false
               };
 
               if (angular.isUndefined(colDef.columnFilter)) {
@@ -242,6 +247,8 @@
 
           var logics = col.colDef.columnFilter.logics;
 
+          var isNull = col.colDef.columnFilter.isNull;
+
           // add the data into the filter object of the column
           // the terms array is the "term"
           col.filters[0].term = terms;
@@ -251,6 +258,8 @@
 
           // logic is new, so we will add it, and handle it in our override function
           col.filters[0].logic = logics;
+
+          col.filters[0].isNull = isNull;
           col.grid.api.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
         },
         /**
@@ -409,6 +418,7 @@
           $scope.clear = uiGridColumnsFiltersService.clear; // set the clear filter function in the scope
           $scope.operators = uiGridColumnsFiltersConstants[filterType + 'Operators']; // set the operators in the scope
           $scope.logics = uiGridColumnsFiltersConstants.logics; // set the logics in the scope
+          $scope.isNull = uiGridColumnsFiltersConstants.isNull;
 
           // toggle filter popup
           $scope.toggleFilter = function () {

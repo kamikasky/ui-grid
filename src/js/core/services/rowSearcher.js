@@ -252,6 +252,10 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
       return (value <= term);
     }
 
+    if (filter.condition === uiGridConstants.filter.NONE) {
+      return (value == null);
+    }
+
     return true;
   };
 
