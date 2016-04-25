@@ -1,5 +1,5 @@
 /*!
- * ui-grid - v3.1.0-086c845 - 2016-04-22
+ * ui-grid - v3.1.0-6d5013a - 2016-04-25
  * Copyright (c) 2016 ; License: MIT 
  */
 
@@ -9711,7 +9711,7 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     }
 
     if (filter.condition === uiGridConstants.filter.NONE) {
-      return (value === null);
+      return (value == null);
     }
 
     return true;
@@ -27639,7 +27639,8 @@ module.filter('px', function() {
               var columnFilter = {
                 terms: [],
                 operators: [],
-                logics: []
+                logics: [],
+                isNull: false
               };
 
               if (angular.isUndefined(colDef.columnFilter)) {
@@ -27682,6 +27683,8 @@ module.filter('px', function() {
 
           var logics = col.colDef.columnFilter.logics;
 
+          var isNull = col.colDef.columnFilter.isNull;
+
           // add the data into the filter object of the column
           // the terms array is the "term"
           col.filters[0].term = terms;
@@ -27691,6 +27694,8 @@ module.filter('px', function() {
 
           // logic is new, so we will add it, and handle it in our override function
           col.filters[0].logic = logics;
+
+          col.filters[0].isNull = isNull;
           col.grid.api.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
         },
         /**
@@ -27849,6 +27854,7 @@ module.filter('px', function() {
           $scope.clear = uiGridColumnsFiltersService.clear; // set the clear filter function in the scope
           $scope.operators = uiGridColumnsFiltersConstants[filterType + 'Operators']; // set the operators in the scope
           $scope.logics = uiGridColumnsFiltersConstants.logics; // set the logics in the scope
+          $scope.isNull = uiGridColumnsFiltersConstants.isNull;
 
           // toggle filter popup
           $scope.toggleFilter = function () {
@@ -28728,7 +28734,7 @@ angular.module('ui.grid').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('ui-grid/filters/stringColumnFilter',
-    "<select ng-model=\"col.colDef.columnFilter.operators[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"form-control\" placeholder=\"Your filter text...\" ng-model=\"col.colDef.columnFilter.terms[0]\">"
+    "<select ng-model=\"col.colDef.columnFilter.operators[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"form-control\" placeholder=\"Your filter text...\" ng-model=\"col.colDef.columnFilter.terms[0]\"> <input type=\"checkbox\" ng-model=\"col.colDef.columnFilter.isNull\" class=\"form-control\">"
   );
 
 
