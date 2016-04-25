@@ -4,7 +4,7 @@
   "homepage": "http://ui-grid.info",
   "repository": {
     "type": "git",
-    "url": "https://github.com/angular-ui/ui-grid.info.git"
+    "url": "https://github.com/kamikasky/ui-grid.git"
   },
   "authors": [
     "__Contributors__"
