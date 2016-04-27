@@ -1,5 +1,5 @@
-<select 
-    ng-model="col.colDef.columnFilter.operators[0]" 
+<select
+    ng-model="col.colDef.columnFilter.operators[0]"
     class="form-control">
   <option
       value="{{key}}"
@@ -8,11 +8,7 @@
       </option>
 </select>
 
-<input 
+<input
 	class="form-control"
-	placeholder="Your filter text..." 
+	placeholder="Your filter text..."
 	ng-model="col.colDef.columnFilter.terms[0]"/>
-
-<input type="checkbox"
-  ng-model="col.colDef.columnFilter.isNull"
-  class="form-control"/>
