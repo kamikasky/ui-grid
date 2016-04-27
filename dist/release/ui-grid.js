@@ -1,5 +1,5 @@
 /*!
- * ui-grid - v3.1.0-6d5013a - 2016-04-25
+ * ui-grid - v3.1.0-103-g4807616-de62406 - 2016-04-27
  * Copyright (c) 2016 ; License: MIT 
  */
 
@@ -27685,6 +27685,20 @@ module.filter('px', function() {
 
           var isNull = col.colDef.columnFilter.isNull;
 
+          var noneIndex = col.colDef.columnFilter.operators.indexOf("1024");
+          if (noneIndex !== -1) {
+            var val = null;
+            switch (col.colDef.type) {
+              case "string":
+                    val = "null";
+                    break;
+              case "number":
+                    val = -1;
+                    break;
+            }
+            terms.splice(noneIndex, 0, val);
+          }
+
           // add the data into the filter object of the column
           // the terms array is the "term"
           col.filters[0].term = terms;
@@ -27757,7 +27771,7 @@ module.filter('px', function() {
         priority: 500,
         scope: false,
         link: function ($scope, $elm, $attrs, uiGridCtrl) {
-          
+
           function dataChangeCallback(){
                 // now wait for the rows to be updated with the new data
             var watchForRows = $scope.$watch('col.grid.rows.length', function (newRowsLength) {
@@ -27817,36 +27831,36 @@ module.filter('px', function() {
                   angular.isDefined(col.colDef.columnFilter) && angular.isDefined(col.colDef.columnFilter.selectOptions)) {
                   return items;
                 }
-  
+
                 // if we don't create a dynamic selectOptions array
                 var filteredItems = [];
                 var tmpIDs = [];
                 var tmpItem = {};
                 var rows = col.grid.rows;
-  
+
                 // for every row in the grid
                 for (var i = 0; i < rows.length; i++) {
                   // get the label and the value
                   tmpItem.label = col.grid.getCellDisplayValue(rows[i], col);
                   tmpItem.value = col.grid.getCellValue(rows[i], col);
-  
+
                   // make sure we take only unique values
                   if (tmpIDs.indexOf(tmpItem.value) === -1) {
                     tmpIDs.push(tmpItem.value);
                     filteredItems.push(angular.copy(tmpItem));
                   }
-  
+
                 }
-  
+
                 // insert the items into the selectOptions array
                 items = filteredItems;
                 return items;
               };
-            
+
               $scope.selectOptions = $scope.setSelectOptions($scope.selectOptions, currentColumn);
-              
+
               currentColumn.grid.registerDataChangeCallback(dataChangeCallback, [uiGridConstants.dataChange.ALL]);
-              
+
             }
           }
 
@@ -28724,7 +28738,7 @@ angular.module('ui.grid').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('ui-grid/filters/numberColumnFilter',
-    "<select ng-model=\"col.colDef.columnFilter.operators[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"dtl\" type=\"number\" ng-model=\"col.colDef.columnFilter.terms[0]\"> {{col.colDef.columnFilter.terms[0]}}<select ng-model=\"col.colDef.columnFilter.logics[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, logic) in logics\">{{logic}}</option></select><select ng-model=\"col.colDef.columnFilter.operators[1]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"dtl\" type=\"number\" ng-model=\"col.colDef.columnFilter.terms[1]\">"
+    "<select ng-model=\"col.colDef.columnFilter.operators[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"dtl\" type=\"number\" ng-model=\"col.colDef.columnFilter.terms[0]\"><select ng-model=\"col.colDef.columnFilter.logics[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, logic) in logics\">{{logic}}</option></select><select ng-model=\"col.colDef.columnFilter.operators[1]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"dtl\" type=\"number\" ng-model=\"col.colDef.columnFilter.terms[1]\">"
   );
 
 
@@ -28734,7 +28748,7 @@ angular.module('ui.grid').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('ui-grid/filters/stringColumnFilter',
-    "<select ng-model=\"col.colDef.columnFilter.operators[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"form-control\" placeholder=\"Your filter text...\" ng-model=\"col.colDef.columnFilter.terms[0]\"> <input type=\"checkbox\" ng-model=\"col.colDef.columnFilter.isNull\" class=\"form-control\">"
+    "<select ng-model=\"col.colDef.columnFilter.operators[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"form-control\" placeholder=\"Your filter text...\" ng-model=\"col.colDef.columnFilter.terms[0]\">"
   );
 
 

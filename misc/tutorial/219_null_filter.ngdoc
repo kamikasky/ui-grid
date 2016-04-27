@@ -15,7 +15,7 @@ There are 2 ways to setup the columnsFilters.  The first is to use the `filter` 
 There are 4 types of filters: string (default), number, date and select.  If no type is mentioned, then "string" is used.
 The "select" has 2 ways to setup:
 1) Setup a 'selectOptions' in the filter or the {@link api/ui.grid.columnsFilters.api:ColumnDef columnFilter}.
-2) Don't set the `selectOptions` and the options will be set dynamically from the available data (and will also be updated anytime the `notifyDataChange` event is triggered).   
+2) Don't set the `selectOptions` and the options will be set dynamically from the available data (and will also be updated anytime the `notifyDataChange` event is triggered).
 
 In below exaple you can see the usage in action.
 
@@ -28,12 +28,12 @@ In below exaple you can see the usage in action.
       var today = new Date();
       var nextWeek = new Date();
       nextWeek.setDate(nextWeek.getDate() + 7);
-      
+
       $scope.addToGender = function(){
         $scope.gridApi.grid.options.data[0].gender = 3;
         $scope.gridApi.grid.api.core.notifyDataChange(uiGridConstants.dataChange.ALL);
       }
-      
+
       $scope.highlightFilteredHeader = function( row, rowRenderIndex, col, colRenderIndex ) {
         if( col.filters[0].term ){
           return 'header-filtered';
@@ -129,7 +129,8 @@ In below exaple you can see the usage in action.
             headerCellClass: $scope.highlightFilteredHeader
           },
           { field: 'mixedDate', displayName: "Long Date", cellFilter: 'date:"longDate"', filterCellFiltered:true, width: '15%',
-          }
+          },
+          { field: 'about'}
         ]
       };
 
@@ -182,8 +183,8 @@ In below exaple you can see the usage in action.
   </file>
   <file name="main.css">
     .grid {
-      width: 650px;
-      height: 400px;
+      width: 850px;
+      height: 600px;
     }
 
     .header-filtered {
