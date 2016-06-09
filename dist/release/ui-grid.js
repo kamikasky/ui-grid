@@ -1,5 +1,5 @@
 /*!
- * ui-grid - v3.1.0-103-g4807616-24dfb99 - 2016-04-27
+ * ui-grid - v3.1.3 - 2016-05-25
  * Copyright (c) 2016 ; License: MIT 
  */
 
@@ -28748,7 +28748,7 @@ angular.module('ui.grid').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('ui-grid/filters/stringColumnFilter',
-    "<select ng-model=\"col.colDef.columnFilter.operators[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"form-control\" placeholder=\"Your filter text...\" ng-model=\"col.colDef.columnFilter.terms[0]\">"
+    "<select ng-model=\"col.colDef.columnFilter.operators[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"form-control\" placeholder=\"Your filter text...\" ng-model=\"col.colDef.columnFilter.terms[0]\"><select ng-model=\"col.colDef.columnFilter.logics[0]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, logic) in logics\">{{logic}}</option></select><select ng-model=\"col.colDef.columnFilter.operators[1]\" class=\"form-control\"><option value=\"{{key}}\" ng-repeat=\"(key, operator) in operators\">{{operator}}</option></select><input class=\"form-control\" placeholder=\"Your filter text...\" ng-model=\"col.colDef.columnFilter.terms[1]\">"
   );
 
 
