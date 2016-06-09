@@ -1,5 +1,5 @@
 /*!
- * ui-grid - v3.1.0-110-g8453e24-e3a55aa - 2016-06-09
+ * ui-grid - v3.1.3-1 - 2016-06-09
  * Copyright (c) 2016 ; License: MIT 
  */
 #ui-grid-twbs #ui-grid-twbs .form-horizontal .form-group:before,
@@ -961,7 +961,7 @@ fieldset[disabled] .ui-grid-menu .ui-grid-menu-inner .ui-grid-menu-close-button.
 }
 .ui-grid .ui-grid-header .ui-grid-top-panel {
   background: #ffffff;
-  box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
+  border-bottom: 1px rgba(0, 0, 0, 0.12) solid;
 }
 .ui-grid .ui-grid-header .ui-grid-top-panel .ui-grid-header-cell {
   text-align: center;
@@ -1001,6 +1001,14 @@ fieldset[disabled] .ui-grid-menu .ui-grid-menu-inner .ui-grid-menu-close-button.
 }
 .ui-grid .ui-grid-viewport .ui-grid-canvas .ui-grid-row:last-child .ui-grid-cell {
   border-bottom-width: 1px !important;
+}
+.ui-grid .ui-grid-pinned-container-left .ui-grid-header-cell:last-child {
+  border-right: 1px solid;
+  border-right-color: #cccccc;
+}
+.ui-grid .ui-grid-pinned-container-left .ui-grid-viewport {
+  border-right: 1px solid;
+  border-right-color: #cccccc;
 }
 
 /* This file contains variable declarations (do not remove this line) */
