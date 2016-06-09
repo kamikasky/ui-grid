@@ -1,5 +1,5 @@
 /*!
- * ui-grid - v3.1.3 - 2016-05-25
+ * ui-grid - v3.1.0-110-g8453e24-6132d69 - 2016-06-09
  * Copyright (c) 2016 ; License: MIT 
  */
 
@@ -2223,7 +2223,6 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           };
 
           $scope.itemAction = function($event,title) {
-            gridUtil.logDebug('itemAction');
             $event.stopPropagation();
 
             if (typeof($scope.action) === 'function') {
@@ -3780,6 +3779,7 @@ angular.module('ui.grid')
      * If you only want to resize the grid, not regenerate all the rows
      * and columns, you should consider directly calling refreshCanvas instead.
      *
+     * @param {boolean} [rowsAltered] Optional flag for refreshing when the number of rows has changed
      */
     self.api.registerMethod( 'core', 'refresh', this.refresh );
 
@@ -9020,41 +9020,6 @@ angular.module('ui.grid')
         var context = this.row;
         return getter(context);
       };
-      /**
-       * @ngdoc function
-       * @name getIntersectionValueFiltered
-       * @methodOf ui.grid.class:GridRowColumn
-       * @description Gets the intersection of where the row and column meet.
-       * @returns {String|Number|Object} The value from the grid data that this GridRowColumn points too.
-       *          If the column has a cellFilter this will also apply the filter to it and return the value that the filter displays.
-       */
-      GridRowColumn.prototype.getIntersectionValueFiltered = function(){
-        var value = this.getIntersectionValueRaw();
-        if (this.col.cellFilter && this.col.cellFilter !== ''){
-          var getFilterIfExists = function(filterName){
-            try {
-              return $filter(filterName);
-            } catch (e){
-              return null;
-            }
-          };
-          var filter = getFilterIfExists(this.col.cellFilter);
-          if (filter) { // Check if this is filter name or a filter string
-            value = filter(value);
-          } else { // We have the template version of a filter so we need to parse it apart
-            // Get the filter params out using a regex
-            // Test out this regex here https://regex101.com/r/rC5eR5/2
-            var re = /([^:]*):([^:]*):?([\s\S]+)?/;
-            var matches;
-            if ((matches = re.exec(this.col.cellFilter)) !== null) {
-                // View your result using the matches-variable.
-                // eg matches[0] etc.
-                value = $filter(matches[1])(value, matches[2], matches[3]);
-            }
-          }
-        }
-        return value;
-      };
       return GridRowColumn;
     }
   ]);
@@ -9749,9 +9714,11 @@ module.service('rowSearcher', ['gridUtil', 'uiGridConstants', function (gridUtil
     for (var i = 0; i < filtersLength; i++) {
       var filter = filters[i];
 
-      var ret = rowSearcher.runColumnFilter(grid, row, column, filter);
-      if (!ret) {
-        return false;
+      if ( !gridUtil.isNullOrUndefined(filter.term) && filter.term !== '' || filter.noTerm ){ 
+        var ret = rowSearcher.runColumnFilter(grid, row, column, filter);
+        if (!ret) {
+          return false;
+        }
       }
     }
 
@@ -10697,7 +10664,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
       }
 
       // See if the template is itself a promise
-      if (template.hasOwnProperty('then')) {
+      if (angular.isFunction(template.then)) {
         return template.then(s.postProcessTemplate);
       }
 
@@ -11721,8 +11688,6 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
     deltaX = Math[ deltaX >= 1 ? 'floor' : 'ceil' ](deltaX / lowestDelta);
     deltaY = Math[ deltaY >= 1 ? 'floor' : 'ceil' ](deltaY / lowestDelta);
 
-    event.deltaMode = 0;
-
     // Normalise offsetX and offsetY properties
     // if ($elm[0].getBoundingClientRect ) {
     //   var boundingRect = $(elm)[0].getBoundingClientRect();
@@ -12005,7 +11970,7 @@ module.filter('px', function() {
           exporterSelectedAsCsv: 'markierte Daten als CSV exportieren',
           exporterAllAsPdf: 'Alle Daten als PDF exportieren',
           exporterVisibleAsPdf: 'sichtbare Daten als PDF exportieren',
-          exporterSelectedAsPdf: 'markierte Daten als CSV exportieren',
+          exporterSelectedAsPdf: 'markierte Daten als PDF exportieren',
           clearAllFilters: 'Alle Filter zurücksetzen'
         },
         importer: {
@@ -15256,7 +15221,7 @@ module.filter('px', function() {
                   var values = [];
                   var currentSelection = grid.api.cellNav.getCurrentSelection();
                   for (var i = 0; i < currentSelection.length; i++) {
-                    values.push(currentSelection[i].getIntersectionValueFiltered());
+                    values.push(grid.getCellDisplayValue(currentSelection[i].row, currentSelection[i].col));
                   }
                   var cellText = values.toString();
                   setNotifyText(cellText);
@@ -18232,6 +18197,7 @@ module.filter('px', function() {
          * where each header is an object with name, width and maybe alignment
          * @param {array} exportData an array of rows, where each row is
          * an array of column data
+         * @param {string} separator a string that represents the separator to be used in the csv file
          * @returns {string} csv the formatted csv as a string
          */
         formatAsCsv: function (exportColumnHeaders, exportData, separator) {
@@ -20998,17 +20964,28 @@ module.filter('px', function() {
         }
 
         if (args.y) {
-          var percentage;
-          var targetPercentage = args.grid.options.infiniteScrollRowsFromEnd / args.grid.renderContainers.body.visibleRowCache.length;
-          if (args.grid.scrollDirection === uiGridConstants.scrollDirection.UP ) {
-            percentage = args.y.percentage;
-            if (percentage <= targetPercentage){
-              service.loadData(args.grid);
-            }
-          } else if (args.grid.scrollDirection === uiGridConstants.scrollDirection.DOWN) {
-            percentage = 1 - args.y.percentage;
-            if (percentage <= targetPercentage){
-              service.loadData(args.grid);
+
+          // If the user is scrolling very quickly all the way to the top/bottom, the scroll handler can get confused
+          // about the direction. First we check if they've gone all the way, and data always is loaded in this case.
+          if (args.y.percentage === 0) {
+            args.grid.scrollDirection = uiGridConstants.scrollDirection.UP;
+            service.loadData(args.grid);
+          } else if (args.y.percentage === 1) {
+            args.grid.scrollDirection = uiGridConstants.scrollDirection.DOWN;
+            service.loadData(args.grid);
+          } else { // Scroll position is somewhere in between top/bottom, so determine whether it's far enough to load more data.
+            var percentage;
+            var targetPercentage = args.grid.options.infiniteScrollRowsFromEnd / args.grid.renderContainers.body.visibleRowCache.length;
+            if (args.grid.scrollDirection === uiGridConstants.scrollDirection.UP ) {
+              percentage = args.y.percentage;
+              if (percentage <= targetPercentage){
+                service.loadData(args.grid);
+              }
+            } else if (args.grid.scrollDirection === uiGridConstants.scrollDirection.DOWN) {
+              percentage = 1 - args.y.percentage;
+              if (percentage <= targetPercentage){
+                service.loadData(args.grid);
+              }
             }
           }
         }
