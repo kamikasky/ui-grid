@@ -16,7 +16,8 @@
         border-bottom: none;
         .ui-grid-top-panel {
             background: @base-color;
-            box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
+            // box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
+            border-bottom: 1px rgba(0, 0, 0, 0.12) solid;
             .ui-grid-header-cell {
                 text-align: center;
                 font-weight: initial;
@@ -58,4 +59,28 @@
             }
         }
     }
+    .ui-grid-pinned-container-left {
+        .ui-grid-header-cell {
+
+            &:last-child {
+                border-right: 1px solid;
+                border-right-color: rgba(204, 204, 204, 1.0);
+            }
+
+        }
+        .ui-grid-viewport {
+            border-right: 1px solid;
+            border-right-color: rgba(204, 204, 204, 1.0);
+        }
+    }
+    .panel {
+        border-radius: 0px;
+        border: 0 solid transparent;
+    }
 }
+
+.scrollFiller {
+    border-top: 0;
+    border-bottom: 1px solid #d4d4d4;
+}
+
