@@ -1,5 +1,5 @@
 /*!
- * ui-grid - v3.1.3-1-b8253de - 2016-06-23
+ * ui-grid - v3.1.3-1-a0cb02e - 2016-06-23
  * Copyright (c) 2016 ; License: MIT 
  */
 
@@ -21388,11 +21388,23 @@ module.filter('px', function() {
         });
       },
       redrawColumnAtPosition: function (grid, originalPosition, newPosition) {
+        var columns = grid.columns;
+
         if (originalPosition === newPosition) {
           return;
         }
 
-        var columns = grid.columns;
+        //check columns in between move-range to make sure they are visible columns
+        var i0 = Math.min(originalPosition, newPosition);
+        for (i0; i0 < Math.max(originalPosition, newPosition);i0++) {
+          if (columns[i0].visible) {
+            break;
+          }
+        }
+        if (i0 === Math.max(originalPosition, newPosition)) {
+          //no visible column found, column did not visibly move
+          return;
+        }
 
         var originalColumn = columns[originalPosition];
         if (originalColumn.colDef.enableColumnMoving) {
