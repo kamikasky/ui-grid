@@ -1,5 +1,5 @@
 /*!
- * ui-grid - v3.1.3-1-16ca6f3 - 2016-06-23
+ * ui-grid - v3.2.0-c7ddcd2 - 2016-06-29
  * Copyright (c) 2016 ; License: MIT 
  */
 #ui-grid-twbs #ui-grid-twbs .form-horizontal .form-group:before,
@@ -1031,6 +1031,11 @@ fieldset[disabled] .ui-grid-menu .ui-grid-menu-inner .ui-grid-menu-close-button.
 .ui-grid .panel {
   border-radius: 0px;
   border: 0 solid transparent;
+}
+.scrollFiller {
+  float: left;
+  border: none;
+  border-bottom: 1px #d4d4d4 solid;
 }
 
 /* This file contains variable declarations (do not remove this line) */
