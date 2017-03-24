@@ -1,5 +1,5 @@
 /*!
- * ui-grid - v4.0.3 - 2017-01-10
+ * ui-grid - v4.0.3-c98b434 - 2017-03-24
  * Copyright (c) 2017 ; License: MIT 
  */
 
@@ -280,7 +280,7 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
                   compiledElementFn($scope, function(clonedElement, scope) {
                     $elm.append(clonedElement);
                   });
-                });
+                }).catch(angular.noop);
             }
             else {
               var html = $scope.col.cellTemplate
@@ -790,7 +790,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
           .then(function () {
             $scope.grid.refresh();
             $scope.hideMenu();
-          });
+          }).catch(angular.noop);
       };
 
       $scope.unsortColumn = function () {
@@ -844,7 +844,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
                 //The fallback action is to focus on the grid menu
                 return focusToGridMenu();
               }
-            });
+            }).catch(angular.noop);
           } else {
             // Fallback action to focus on the grid menu
             focusToGridMenu();
@@ -1040,7 +1040,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
                     containerCtrl.footerViewport = footerViewport;
                   }
                 }
-              });
+              }).catch(angular.noop);
           },
 
           post: function ($scope, $elm, $attrs, controllers) {
@@ -1067,6 +1067,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
   }]);
 
 })();
+
 (function () {
   'use strict';
 
@@ -1093,7 +1094,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
 
                 var newElm = $compile(template)($scope);
                 $elm.append(newElm);
-              });
+              }).catch(angular.noop);
           },
 
           post: function ($scope, $elm, $attrs, controllers) {
@@ -1105,6 +1106,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
   }]);
 
 })();
+
 (function(){
   'use strict';
 
@@ -1127,7 +1129,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
                 
                 var newElm = $compile(template)($scope);
                 $elm.append(newElm);
-              });
+              }).catch(angular.noop);
           },
 
           post: function ($scope, $elm, $attrs, uiGridCtrl) {
@@ -1141,6 +1143,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
   }]);
 
 })();
+
 (function(){
   'use strict';
 
@@ -1262,7 +1265,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
                 if ( $scope.colMenu ) {
                   uiGridCtrl.columnMenuScope.showMenu($scope.col, $elm, event);
                 }
-              });
+              }).catch(angular.noop);
 
               uiGridCtrl.fireEvent(uiGridConstants.events.COLUMN_HEADER_CLICK, {event: event, columnName: $scope.col.colDef.name});
 
@@ -1493,7 +1496,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
                 .then(function () {
                   if (uiGridCtrl.columnMenuScope) { uiGridCtrl.columnMenuScope.hideMenu(); }
                   uiGridCtrl.grid.refresh();
-                });
+                }).catch(angular.noop);
             };
 
 
@@ -1590,7 +1593,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService, $documen
                 }
 
                 $scope.grid.queueRefresh();
-              });
+              }).catch(angular.noop);
 
             function updateHeaderReferences() {
               containerCtrl.header = containerCtrl.colContainer.header = $elm;
@@ -2001,7 +2004,7 @@ angular.module('ui.grid')
           menuItem.title = successValue;
         }, function( errorValue ) {
           menuItem.title = errorValue;
-        });
+        }).catch(angular.noop);
       } else {
         gridUtil.logError('Expected gridMenuTitleFilter to return a string or a promise, it has returned neither, bad config');
         menuItem.title = 'badconfig';
@@ -2128,7 +2131,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
           var template = angular.element(contents);
           var newElm = $compile(template)($scope);
           $elm.replaceWith(newElm);
-        });
+        }).catch(angular.noop);
       }
 
       var setupHeightStyle = function(gridHeight) {
@@ -2326,7 +2329,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
 
                   var newElm = $compile(template)($scope);
                   $elm.replaceWith(newElm);
-                });
+                }).catch(angular.noop);
           }
         },
         post: function ($scope, $elm, $attrs, controllers) {
@@ -2373,12 +2376,8 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
               if ( !$scope.leaveOpen ){
                 $scope.$emit('hide-menu');
               } else {
-                /*
-                 * XXX: Fix after column refactor
-                 * Ideally the focus would remain on the item.
-                 * However, since there are two menu items that have their 'show' property toggled instead. This is a quick fix.
-                 */
-                gridUtil.focus.bySelector(angular.element(gridUtil.closestElm($elm, ".ui-grid-menu-items")), 'button[type=button]', true);
+                // Maintain focus on the selected item
+                gridUtil.focus.bySelector(angular.element($event.target.parentElement), 'button[type=button]', true);
               }
             }
           };
@@ -2982,7 +2981,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
                   clonedElement = newElm;
                   cloneScope = newScope;
                 });
-              });
+              }).catch(angular.noop);
             }
 
             // Initially attach the compiled template to this scope
@@ -3004,6 +3003,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
   }]);
 
 })();
+
 (function(){
 // 'use strict';
 
@@ -3303,7 +3303,7 @@ angular.module('ui.grid')
               self.grid.preCompileCellTemplates();
 
               self.grid.refreshCanvas(true);
-            });
+            }).catch(angular.noop);
         });
       }
 
@@ -3346,7 +3346,7 @@ angular.module('ui.grid')
               self.grid.preCompileCellTemplates();
 
               self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.COLUMN);
-            });
+            }).catch(angular.noop);
         }
       }
 
@@ -3390,7 +3390,7 @@ angular.module('ui.grid')
             promises.push(self.grid.buildColumns()
               .then(function() {
                 self.grid.preCompileCellTemplates();
-              }));
+              }).catch(angular.noop));
           }
 
           $q.all(promises).then(function() {
@@ -3405,8 +3405,8 @@ angular.module('ui.grid')
                   self.grid.refreshCanvas(true);
                   self.grid.callDataChangeCallbacks(uiGridConstants.dataChange.ROW);
                 });
-              });
-          });
+              }).catch(angular.noop);
+          }).catch(angular.noop);
         }
       }
 
@@ -4521,8 +4521,8 @@ angular.module('ui.grid')
           .then( function() {
             self.preCompileCellTemplates();
             self.queueGridRefresh();
-          });
-      });
+          }).catch(angular.noop);
+      }).catch(angular.noop);
   };
 
   /**
@@ -4639,7 +4639,7 @@ angular.module('ui.grid')
       if (self.rows.length > 0){
         self.assignTypes();
       }
-    });
+    }).catch(angular.noop);
   };
 
   Grid.prototype.preCompileCellTemplate = function(col) {
@@ -4669,7 +4669,7 @@ angular.module('ui.grid')
       } else if ( col.cellTemplatePromise ){
         col.cellTemplatePromise.then( function() {
           self.preCompileCellTemplate( col );
-        });
+        }).catch(angular.noop);
       }
     });
   };
@@ -4887,12 +4887,12 @@ angular.module('ui.grid')
     var p1 = $q.when(self.processRowsProcessors(self.rows))
       .then(function (renderableRows) {
         return self.setVisibleRows(renderableRows);
-      });
+      }).catch(angular.noop);
 
     var p2 = $q.when(self.processColumnsProcessors(self.columns))
       .then(function (renderableColumns) {
         return self.setVisibleColumns(renderableColumns);
-      });
+      }).catch(angular.noop);
 
     return $q.all([p1, p2]);
   };
@@ -5088,7 +5088,7 @@ angular.module('ui.grid')
           else {
             finished.resolve(processedRows);
           }
-        });
+        }).catch(angular.noop);
     }
 
     // Start on the first processor
@@ -5216,7 +5216,7 @@ angular.module('ui.grid')
           else {
             finished.resolve(myRenderableColumns);
           }
-        });
+        }).catch(angular.noop);
     }
 
     // Start on the first processor
@@ -5289,7 +5289,7 @@ angular.module('ui.grid')
 
     self.refreshCanceller.then(function () {
       self.refreshCanceller = null;
-    });
+    }).catch(angular.noop);
 
     return self.refreshCanceller;
   };
@@ -5314,7 +5314,7 @@ angular.module('ui.grid')
 
     self.gridRefreshCanceller.then(function () {
       self.gridRefreshCanceller = null;
-    });
+    }).catch(angular.noop);
 
     return self.gridRefreshCanceller;
   };
@@ -5794,17 +5794,16 @@ angular.module('ui.grid')
 
     var p1 = self.processRowsProcessors(self.rows).then(function (renderableRows) {
       self.setVisibleRows(renderableRows);
-    });
+    }).catch(angular.noop);
 
     var p2 = self.processColumnsProcessors(self.columns).then(function (renderableColumns) {
       self.setVisibleColumns(renderableColumns);
-    });
+    }).catch(angular.noop);
 
     return $q.all([p1, p2]).then(function () {
-      self.redrawInPlace(rowsAltered);
-
       self.refreshCanvas(true);
-    });
+      self.redrawInPlace(rowsAltered);
+    }).catch(angular.noop);
   };
 
   /**
@@ -5825,7 +5824,7 @@ angular.module('ui.grid')
         self.redrawInPlace();
 
         self.refreshCanvas( true );
-      });
+      }).catch(angular.noop);
   };
 
   /**
@@ -8821,7 +8820,8 @@ angular.module('ui.grid')
 
       } else if (gridUtil.endsWith(column.width, "%")) {
         // percentage width, set to percentage of the viewport
-        width = parseFloat(parseInt(column.width.replace(/%/g, ''), 10) / 100 * availableWidth);
+        // round down to int - some browsers don't play nice with float maxWidth
+        width = parseInt(parseInt(column.width.replace(/%/g, ''), 10) / 100 * availableWidth);
 
         if ( width > column.maxWidth ){
           width = column.maxWidth;
@@ -9462,7 +9462,7 @@ angular.module('ui.grid')
                 function (res) {
                   // Todo handle response error here?
                   throw new Error("Couldn't fetch/use row template '" + grid.options.rowTemplate + "'");
-                });
+                }).catch(angular.noop);
           }
 
           grid.registerColumnBuilder(service.defaultColumnBuilder);
@@ -9543,7 +9543,7 @@ angular.module('ui.grid')
                 },
                 function (res) {
                   throw new Error("Couldn't fetch/use colDef." + templateType + " '" + colDef[templateType] + "'");
-                })
+                }).catch(angular.noop)
             );
 
           };
@@ -10888,13 +10888,13 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
 
       // See if the template is itself a promise
       if (angular.isFunction(template.then)) {
-        return template.then(s.postProcessTemplate);
+        return template.then(s.postProcessTemplate).catch(angular.noop);
       }
 
       // If the template is an element, return the element
       try {
         if (angular.element(template).length > 0) {
-          return $q.when(template).then(s.postProcessTemplate);
+          return $q.when(template).then(s.postProcessTemplate).catch(angular.noop);
         }
       }
       catch (err){
@@ -10916,7 +10916,7 @@ module.service('gridUtil', ['$log', '$window', '$document', '$http', '$templateC
             throw new Error("Could not get template " + template + ": " + err);
           }
         )
-        .then(s.postProcessTemplate);
+        .then(s.postProcessTemplate).catch(angular.noop);
     },
 
     //
@@ -11981,6 +11981,116 @@ module.filter('px', function() {
 (function () {
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
+      $delegate.add('bg', {
+        headerCell: {
+          aria: {
+            defaultFilterLabel: 'Филттър за колоната',
+            removeFilter: 'Премахни филтър',
+            columnMenuButtonLabel: 'Меню на колоната'
+          },
+          priority: 'Приоритет:',
+          filterLabel: "Филтър за колоната: "
+        },
+        aggregate: {
+          label: 'обекти'
+        },
+        search: {
+          placeholder: 'Търсене...',
+          showingItems: 'Показани обекти:',
+          selectedItems: 'избрани обекти:',
+          totalItems: 'Общо:',
+          size: 'Размер на страницата:',
+          first: 'Първа страница',
+          next: 'Следваща страница',
+          previous: 'Предишна страница',
+          last: 'Последна страница'
+        },
+        menu: {
+          text: 'Избери колони:'
+        },
+        sort: {
+          ascending: 'Сортиране по възходящ ред',
+          descending: 'Сортиране по низходящ ред',
+          none: 'Без сортиране',
+          remove: 'Премахни сортирането'
+        },
+        column: {
+          hide: 'Скрий колоната'
+        },
+        aggregation: {
+          count: 'Общо редове: ',
+          sum: 'общо: ',
+          avg: 'средно: ',
+          min: 'най-малко: ',
+          max: 'най-много: '
+        },
+        pinning: {
+          pinLeft: 'Прикрепи вляво',
+          pinRight: 'Прикрепи вдясно',
+          unpin: 'Премахване'
+        },
+        columnMenu: {
+          close: 'Затвори'
+        },
+        gridMenu: {
+          aria: {
+            buttonLabel: 'Меню на таблицата'
+          },
+          columns: 'Колони:',
+          importerTitle: 'Импортиране на файл',
+          exporterAllAsCsv: 'Експортиране на данните като csv',
+          exporterVisibleAsCsv: 'Експортиране на видимите данни като csv',
+          exporterSelectedAsCsv: 'Експортиране на избраните данни като csv',
+          exporterAllAsPdf: 'Експортиране на данните като pdf',
+          exporterVisibleAsPdf: 'Експортиране на видимите данни като pdf',
+          exporterSelectedAsPdf: 'Експортиране на избраните данни като pdf',
+          clearAllFilters: 'Премахни всички филтри'
+        },
+        importer: {
+          noHeaders: 'Имената на колоните не успяха да бъдат извлечени, файлът има ли хедър?',
+          noObjects: 'Обектите не успяха да бъдат извлечени, файлът съдържа ли данни, различни от хедър?',
+          invalidCsv: 'Файлът не може да бъде обработеб, уверете се, че е валиден CSV файл',
+          invalidJson: 'Файлът не може да бъде обработеб, уверете се, че е валиден JSON файл',
+          jsonNotArray: 'Импортираният JSON файл трябва да съдържа масив, прекратяване.'
+        },
+        pagination: {
+          aria: {
+            pageToFirst: 'Към първа страница',
+            pageBack: 'Страница назад',
+            pageSelected: 'Избрана страница',
+            pageForward: 'Страница напред',
+            pageToLast: 'Към последна страница'
+          },
+          sizes: 'обекта на страница',
+          totalItems: 'обекта',
+          through: 'до',
+          of: 'от'
+        },
+        grouping: {
+          group: 'Групиране',
+          ungroup: 'Премахване на групирането',
+          aggregate_count: 'Сбор: Брой',
+          aggregate_sum: 'Сбор: Сума',
+          aggregate_max: 'Сбор: Максимум',
+          aggregate_min: 'Сбор: Минимум',
+          aggregate_avg: 'Сбор: Средно',
+          aggregate_remove: 'Сбор: Премахване'
+        },
+        validate: {
+          error: 'Грешка:',
+          minLength: 'Стойността трябва да съдържа поне THRESHOLD символа.',
+          maxLength: 'Стойността не трябва да съдържа повече от THRESHOLD символа.',
+          required: 'Необходима е стойност.'
+        }
+      });
+      return $delegate;
+    }]);
+  }]);
+})();
+
+(function () {
+  angular.module('ui.grid').config(['$provide', function($provide) {
+    $provide.decorator('i18nService', ['$delegate', function($delegate) {
       var lang = {
               aggregate: {
                   label: 'položky'
@@ -12849,6 +12959,119 @@ module.filter('px', function() {
 (function () {
   angular.module('ui.grid').config(['$provide', function($provide) {
     $provide.decorator('i18nService', ['$delegate', function($delegate) {
+      $delegate.add('is', {
+        headerCell: {
+          aria: {
+            defaultFilterLabel: 'Sía fyrir dálk',
+            removeFilter: 'Fjarlægja síu',
+            columnMenuButtonLabel: 'Dálkavalmynd'
+          },
+          priority: 'Forgangsröðun:',
+          filterLabel: "Sía fyrir dálka: "
+        },
+        aggregate: {
+          label: 'hlutir'
+        },
+        groupPanel: {
+          description: 'Dragðu dálkhaus hingað til að flokka saman eftir þeim dálki.'
+        },
+        search: {
+          placeholder: 'Leita...',
+          showingItems: 'Sýni hluti:',
+          selectedItems: 'Valdir hlutir:',
+          totalItems: 'Hlutir alls:',
+          size: 'Stærð síðu:',
+          first: 'Fyrsta síða',
+          next: 'Næsta síða',
+          previous: 'Fyrri síða',
+          last: 'Síðasta síða'
+        },
+        menu: {
+          text: 'Veldu dálka:'
+        },
+        sort: {
+          ascending: 'Raða hækkandi',
+          descending: 'Raða lækkandi',
+          none: 'Engin röðun',
+          remove: 'Fjarlægja röðun'
+        },
+        column: {
+          hide: 'Fela dálk'
+        },
+        aggregation: {
+          count: 'fjöldi raða: ',
+          sum: 'summa: ',
+          avg: 'meðaltal: ',
+          min: 'lágmark: ',
+          max: 'hámark: '
+        },
+        pinning: {
+          pinLeft: 'Festa til vinstri',
+          pinRight: 'Festa til hægri',
+          unpin: 'Losa'
+        },
+        columnMenu: {
+          close: 'Loka'
+        },
+        gridMenu: {
+          aria: {
+            buttonLabel: 'Töflu valmynd'
+          },
+          columns: 'Dálkar:',
+          importerTitle: 'Flytja inn skjal',
+          exporterAllAsCsv: 'Flytja út gögn sem csv',
+          exporterVisibleAsCsv: 'Flytja út sýnileg gögn sem csv',
+          exporterSelectedAsCsv: 'Flytja út valin gögn sem csv',
+          exporterAllAsPdf: 'Flytja út öll gögn sem pdf',
+          exporterVisibleAsPdf: 'Flytja út sýnileg gögn sem pdf',
+          exporterSelectedAsPdf: 'Flytja út valin gögn sem pdf',
+          clearAllFilters: 'Hreinsa allar síur'
+        },
+        importer: {
+          noHeaders: 'Ekki hægt að vinna dálkanöfn úr skjalinu, er skjalið örugglega með haus?',
+          noObjects: 'Ekki hægt að vinna hluti úr skjalinu, voru örugglega gögn í skjalinu önnur en hausinn?',
+          invalidCsv: 'Tókst ekki að vinna skjal, er það örggulega gilt CSV?',
+          invalidJson: 'Tókst ekki að vinna skjal, er það örugglega gilt Json?',
+          jsonNotArray: 'Innflutt json skjal verður að innihalda fylki, hætti við.'
+        },
+        pagination: {
+          aria: {
+            pageToFirst: 'Fletta að fyrstu',
+            pageBack: 'Fletta til baka',
+            pageSelected: 'Valin síða',
+            pageForward: 'Fletta áfram',
+            pageToLast: 'Fletta að síðustu'
+          },
+          sizes: 'hlutir á síðu',
+          totalItems: 'hlutir',
+          through: 'gegnum',
+          of: 'af'
+        },
+        grouping: {
+          group: 'Flokka',
+          ungroup: 'Sundurliða',
+          aggregate_count: 'Fjöldi: ',
+          aggregate_sum: 'Summa: ',
+          aggregate_max: 'Hámark: ',
+          aggregate_min: 'Lágmark: ',
+          aggregate_avg: 'Meðaltal: ',
+          aggregate_remove: 'Fjarlægja: '
+        },
+        validate: {
+          error: 'Villa:',
+          minLength: 'Gildi ætti að vera a.m.k. THRESHOLD stafa langt.',
+          maxLength: 'Gildi ætti að vera í mesta lagi THRESHOLD stafa langt.',
+          required: 'Þarf að hafa gildi.'
+        }
+      });
+      return $delegate;
+    }]);
+  }]);
+})();
+
+(function () {
+  angular.module('ui.grid').config(['$provide', function($provide) {
+    $provide.decorator('i18nService', ['$delegate', function($delegate) {
       $delegate.add('it', {
         aggregate: {
           label: 'elementi'
@@ -13185,56 +13408,56 @@ module.filter('px', function() {
       $delegate.add('no', {
         headerCell: {
           aria: {
-            defaultFilterLabel: 'Filter for column',
-            removeFilter: 'Remove Filter',
-            columnMenuButtonLabel: 'Column Menu'
+            defaultFilterLabel: 'Filter for kolonne',
+            removeFilter: 'Fjern filter',
+            columnMenuButtonLabel: 'Kolonnemeny'
           },
-          priority: 'Priority:',
-          filterLabel: "Filter for column: "
+          priority: 'Prioritet:',
+          filterLabel: "Filter for kolonne: "
         },
         aggregate: {
-          label: 'items'
+          label: 'elementer'
         },
         groupPanel: {
-          description: 'Drag a column header here and drop it to group by that column.'
+          description: 'Trekk en kolonneoverskrift hit og slipp den for å gruppere etter den kolonnen.'
         },
         search: {
-          placeholder: 'Search...',
-          showingItems: 'Showing Items:',
-          selectedItems: 'Selected Items:',
-          totalItems: 'Total Items:',
-          size: 'Page Size:',
-          first: 'First Page',
-          next: 'Next Page',
-          previous: 'Previous Page',
-          last: 'Last Page'
+          placeholder: 'Søk...',
+          showingItems: 'Viste elementer:',
+          selectedItems: 'Valgte elementer:',
+          totalItems: 'Antall elementer:',
+          size: 'Sidestørrelse:',
+          first: 'Første side',
+          next: 'Neste side',
+          previous: 'Forrige side',
+          last: 'Siste side'
         },
         menu: {
-          text: 'Choose Columns:'
+          text: 'Velg kolonner:'
         },
         sort: {
-          ascending: 'Sort Ascending',
-          descending: 'Sort Descending',
-          none: 'Sort None',
-          remove: 'Remove Sort'
+          ascending: 'Sortere stigende',
+          descending: 'Sortere fallende',
+          none: 'Ingen sortering',
+          remove: 'Fjern sortering'
         },
         column: {
-          hide: 'Hide Column'
+          hide: 'Skjul kolonne'
         },
         aggregation: {
-          count: 'total rows: ',
+          count: 'antall rader: ',
           sum: 'total: ',
-          avg: 'avg: ',
-          min: 'min: ',
-          max: 'max: '
+          avg: 'gjennomsnitt: ',
+          min: 'minimum: ',
+          max: 'maksimum: '
         },
         pinning: {
-          pinLeft: 'Pin Left',
-          pinRight: 'Pin Right',
-          unpin: 'Unpin'
+          pinLeft: 'Fest til venstre',
+          pinRight: 'Fest til høyre',
+          unpin: 'Løsne'
         },
         columnMenu: {
-          close: 'Close'
+          close: 'Lukk'
         },
         gridMenu: {
           aria: {
@@ -13251,34 +13474,34 @@ module.filter('px', function() {
           clearAllFilters: 'Clear all filters'
         },
         importer: {
-          noHeaders: 'Column names were unable to be derived, does the file have a header?',
-          noObjects: 'Objects were not able to be derived, was there data in the file other than headers?',
-          invalidCsv: 'File was unable to be processed, is it valid CSV?',
-          invalidJson: 'File was unable to be processed, is it valid Json?',
-          jsonNotArray: 'Imported json file must contain an array, aborting.'
+          noHeaders: 'Kolonnenavn kunne ikke avledes. Har filen en overskrift?',
+          noObjects: 'Objekter kunne ikke avledes. Er der andre data i filen enn overskriften?',
+          invalidCsv: 'Filen kunne ikke behandles. Er den gyldig CSV?',
+          invalidJson: 'Filen kunne ikke behandles. Er den gyldig JSON?',
+          jsonNotArray: 'Importert JSON-fil må inneholde en liste. Avbryter.'
         },
         pagination: {
           aria: {
-            pageToFirst: 'Page to first',
-            pageBack: 'Page back',
-            pageSelected: 'Selected page',
-            pageForward: 'Page forward',
-            pageToLast: 'Page to last'
+            pageToFirst: 'Gå til første side',
+            pageBack: 'Gå til forrige side',
+            pageSelected: 'Valgte side',
+            pageForward: 'Gå til neste side',
+            pageToLast: 'Gå til siste side'
           },
-          sizes: 'items per page',
-          totalItems: 'items',
-          through: 'through',
-          of: 'of'
+          sizes: 'elementer per side',
+          totalItems: 'elementer',
+          through: 'til',
+          of: 'av'
         },
         grouping: {
-          group: 'Group',
-          ungroup: 'Ungroup',
-          aggregate_count: 'Agg: Count',
-          aggregate_sum: 'Agg: Sum',
-          aggregate_max: 'Agg: Max',
-          aggregate_min: 'Agg: Min',
-          aggregate_avg: 'Agg: Avg',
-          aggregate_remove: 'Agg: Remove'
+          group: 'Gruppere',
+          ungroup: 'Fjerne gruppering',
+          aggregate_count: 'Agr: Antall',
+          aggregate_sum: 'Agr: Sum',
+          aggregate_max: 'Agr: Maksimum',
+          aggregate_min: 'Agr: Minimum',
+          aggregate_avg: 'Agr: Gjennomsnitt',
+          aggregate_remove: 'Agr: Fjern'
         }
       });
       return $delegate;
@@ -13326,7 +13549,7 @@ module.filter('px', function() {
           remove: 'Wyłącz sortowanie'
         },
         column: {
-          hide: 'Ukryj kolumne'
+          hide: 'Ukryj kolumnę'
         },
         aggregation: {
           count: 'Razem pozycji: ',
@@ -13345,7 +13568,7 @@ module.filter('px', function() {
         },
         gridMenu: {
           aria: {
-            buttonLabel: 'Menu Grida'
+            buttonLabel: 'Opcje tabeli'
           },
           columns: 'Kolumny:',
           importerTitle: 'Importuj plik',
@@ -13594,7 +13817,7 @@ module.filter('px', function() {
           },
           sizes: 'itens por página',
           totalItems: 'itens',
-          through: 'através dos',
+          through: 'a',
           of: 'de'
         },
         grouping: {
@@ -15221,7 +15444,7 @@ module.filter('px', function() {
            *  <br/>Defaults to false
            */
           gridOptions.modifierKeysToMultiSelectCells = gridOptions.modifierKeysToMultiSelectCells === true;
-          
+
           /**
            *  @ngdoc array
            *  @name keyDownOverrides
@@ -15574,6 +15797,17 @@ module.filter('px', function() {
             post: function ($scope, $elm, $attrs, uiGridCtrl) {
               var _scope = $scope;
               var grid = uiGridCtrl.grid;
+              var usesAria = true;
+
+              // Detect whether we are using ngAria
+              // (if ngAria module is not used then the stuff inside addAriaLiveRegion
+              // is not used and provides extra fluff)
+              try {
+                angular.module('ngAria');
+              }
+              catch (err) {
+                usesAria = false;
+              }
 
               function addAriaLiveRegion(){
                 // Thanks to google docs for the inspiration behind how to do this
@@ -15635,7 +15869,10 @@ module.filter('px', function() {
 
                 });
               }
-              addAriaLiveRegion();
+              // Only add the ngAria stuff it will be used
+              if (usesAria) {
+                addAriaLiveRegion();
+              }
             }
           };
         }
@@ -16939,7 +17176,7 @@ module.filter('px', function() {
                     if ($elm[0].type === 'checkbox') {
                       $elm.off('blur', $scope.stopEdit);
                       $timeout(function() {
-                        $elm.focus();
+                        $elm[0].focus();
                         $elm.on('blur', $scope.stopEdit);
                       });
                     }
@@ -18558,62 +18795,62 @@ module.filter('px', function() {
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsCsv'),
               action: function ($event) {
-                this.grid.api.exporter.csvExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
+                grid.api.exporter.csvExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuAllData;
+                return grid.options.exporterMenuCsv && grid.options.exporterMenuAllData;
               },
               order: grid.options.exporterMenuItemOrder
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsCsv'),
               action: function ($event) {
-                this.grid.api.exporter.csvExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.csvExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuVisibleData;
+                return grid.options.exporterMenuCsv && grid.options.exporterMenuVisibleData;
               },
               order: grid.options.exporterMenuItemOrder + 1
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsCsv'),
               action: function ($event) {
-                this.grid.api.exporter.csvExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.csvExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuSelectedData &&
-                       ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
+                return grid.options.exporterMenuCsv && grid.options.exporterMenuSelectedData &&
+                       ( grid.api.selection && grid.api.selection.getSelectedRows().length > 0 );
               },
               order: grid.options.exporterMenuItemOrder + 2
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsPdf'),
               action: function ($event) {
-                this.grid.api.exporter.pdfExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
+                grid.api.exporter.pdfExport( uiGridExporterConstants.ALL, uiGridExporterConstants.ALL );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuAllData;
+                return grid.options.exporterMenuPdf && grid.options.exporterMenuAllData;
               },
               order: grid.options.exporterMenuItemOrder + 3
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsPdf'),
               action: function ($event) {
-                this.grid.api.exporter.pdfExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.pdfExport( uiGridExporterConstants.VISIBLE, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuVisibleData;
+                return grid.options.exporterMenuPdf && grid.options.exporterMenuVisibleData;
               },
               order: grid.options.exporterMenuItemOrder + 4
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsPdf'),
               action: function ($event) {
-                this.grid.api.exporter.pdfExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
+                grid.api.exporter.pdfExport( uiGridExporterConstants.SELECTED, uiGridExporterConstants.VISIBLE );
               },
               shown: function() {
-                return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuSelectedData &&
-                       ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 );
+                return grid.options.exporterMenuPdf && grid.options.exporterMenuSelectedData &&
+                       ( grid.api.selection && grid.api.selection.getSelectedRows().length > 0 );
               },
               order: grid.options.exporterMenuItemOrder + 5
             }
@@ -22535,9 +22772,9 @@ module.filter('px', function() {
                  */
                 getLastRowIndex: function () {
                   if (grid.options.useCustomPagination) {
-                    return publicApi.methods.pagination.getFirstRowIndex() + grid.options.paginationPageSizes[grid.options.paginationCurrentPage - 1];
+                    return publicApi.methods.pagination.getFirstRowIndex() + grid.options.paginationPageSizes[grid.options.paginationCurrentPage - 1] - 1;
                   }
-                  return Math.min(grid.options.paginationCurrentPage * grid.options.paginationPageSize, grid.options.totalItems);
+                  return Math.min(grid.options.paginationCurrentPage * grid.options.paginationPageSize, grid.options.totalItems) - 1;
                 },
                 /**
                  * @ngdoc method
@@ -22631,7 +22868,7 @@ module.filter('px', function() {
               currentPage = grid.options.paginationCurrentPage = 1;
               firstRow = (currentPage - 1) * pageSize;
             }
-            return visibleRows.slice(firstRow, lastRow);
+            return visibleRows.slice(firstRow, lastRow + 1);
           };
 
           grid.registerRowsProcessor(processPagination, 900 );
@@ -25947,7 +26184,7 @@ module.filter('px', function() {
                   allowCellFocus: true
                 };
 
-                uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef, 0);
+                uiGridCtrl.grid.addRowHeaderColumn(selectionRowHeaderDef, 0, true);
               }
 
               var processorSet = false;
@@ -26983,7 +27220,7 @@ module.filter('px', function() {
         };
 
         rowHeaderColumnDef.visible = grid.options.treeRowHeaderAlwaysVisible;
-        grid.addRowHeaderColumn( rowHeaderColumnDef, -100 );
+        grid.addRowHeaderColumn(rowHeaderColumnDef, -100, true);
       },
 
 
@@ -27281,7 +27518,7 @@ module.filter('px', function() {
         if ( grid.options.treeRowHeaderAlwaysVisible === false && grid.treeBase.numberLevels <= 0 ){
           newVisibility = false;
         }
-        if ( rowHeader.visible !== newVisibility ) {
+        if ( rowHeader  && rowHeader.visible !== newVisibility ) {
           rowHeader.visible = newVisibility;
           rowHeader.colDef.visible = newVisibility;
           grid.queueGridRefresh();
